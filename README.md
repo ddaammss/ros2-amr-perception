@@ -22,7 +22,7 @@ LiDAR / Depth Camera 센서 데이터를 수신하여 노이즈 필터링, 장�
 - [x] Gazebo 로봇 모델 제작 (4륜 AMR)
 - [x] 3D LiDAR 플러그인 장착 (Velodyne VLP-16 모사, 16채널 PointCloud2)
 - [x] Depth Camera 플러그인 장착 (RGB + Depth + PointCloud2)
-- [ ] PointCloud2 노이즈 필터링 직접 구현 (Statistical Outlier Removal)
+- [] PointCloud2 노이즈 필터링 직접 구현 (Statistical Outlier Removal)
 - [ ] 장애물 클러스터링 직접 구현 (Distance-threshold / DBSCAN)
 - [ ] Obstacle Detection 로직 구현 및 MarkerArray 시각화
 - [ ] 결과를 Nav2 costmap과 연결
@@ -42,10 +42,6 @@ LiDAR / Depth Camera 센서 데이터를 수신하여 노이즈 필터링, 장�
 
 - [ ] slam_toolbox / cartographer 시뮬레이션 환경 구성
 - [ ] 파라미터(맵 해상도, loop closure 조건)에 따른 매핑 품질 비교
-
-### 5. 오픈소스 기여
-
-- [ ] ROS2 / Nav2 / gz-sim 관련 이슈 리포트 또는 문서 개선 PR
 
 ---
 
