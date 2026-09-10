@@ -201,7 +201,7 @@
           <stddev>0.007</stddev>
         </noise>
       </camera>
-      <plugin name="gazebo_ros_depth_camera" filename="libgazebo_ros_depth_camera.so">
+      <plugin name="gazebo_ros_depth_camera" filename="libgazebo_ros_camera.so">
         <ros>
           <remapping>~/image_raw:=/camera/color/image_raw</remapping>
           <remapping>~/depth/image_raw:=/camera/depth/image_raw</remapping>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(my_robot)
+project(amr_perception)
 
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
@@ -9,16 +9,17 @@ find_package(rclpy REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
-  my_robot/sensor_processor.py
+  amr_perception/sensor_processor.py
+  amr_perception/lidar_pointcloud_filter.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# urdf, launch, worlds, config 디렉토리 설치
+# urdf, launch, worlds, rviz 디렉토리 설치
 install(DIRECTORY
   urdf
   launch
   worlds
-  config
+  rviz
   DESTINATION share/${PROJECT_NAME}
 )
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 센서 데이터 처리 노드
-- /lidar/points           : LiDAR PointCloud2 (3D, 16채널)
-- /camera/depth/points    : PointCloud2
-- /camera/color/image_raw : RGB Image
-- /camera/depth/image_raw : Depth Image
+- /lidar/points              : LiDAR PointCloud2 (3D, 16채널)
+- /depth_camera/points       : PointCloud2
+- /depth_camera/image_raw    : RGB Image
+- /depth_camera/depth/image_raw : Depth Image
 """
 
 import rclpy
@@ -38,7 +38,7 @@ class SensorProcessor(Node):
         # PointCloud subscriber (Depth Camera)
         self.pc_sub = self.create_subscription(
             PointCloud2,
-            '/camera/depth/points',
+            '/depth_camera/points',
             self.pointcloud_callback,
             sensor_qos
         )
@@ -46,7 +46,7 @@ class SensorProcessor(Node):
         # RGB Image subscriber
         self.rgb_sub = self.create_subscription(
             Image,
-            '/camera/color/image_raw',
+            '/depth_camera/image_raw',
             self.rgb_callback,
             sensor_qos
         )
@@ -54,7 +54,7 @@ class SensorProcessor(Node):
         # Depth Image subscriber
         self.depth_sub = self.create_subscription(
             Image,
-            '/camera/depth/image_raw',
+            '/depth_camera/depth/image_raw',
             self.depth_callback,
             sensor_qos
         )

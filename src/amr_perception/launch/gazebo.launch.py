@@ -9,7 +9,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    pkg = get_package_share_directory('my_robot')
+    pkg = get_package_share_directory('amr_perception')
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
     # xacro -> urdf 변환
