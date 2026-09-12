@@ -23,7 +23,7 @@ LiDAR / Depth Camera 센서 데이터를 수신하여 노이즈 필터링, 장�
 - [x] 3D LiDAR 플러그인 장착 (Velodyne VLP-16 모사, 16채널 PointCloud2)
 - [x] Depth Camera 플러그인 장착 (RGB + Depth + PointCloud2)
 - [x] PointCloud2 노이즈 필터링 직접 구현 (Statistical Outlier Removal)
-- [ ] 장애물 클러스터링 직접 구현 (Distance-threshold / DBSCAN)
+- [x] 장애물 클러스터링 직접 구현 (Distance-threshold / DBSCAN)
 - [ ] Obstacle Detection 로직 구현 및 MarkerArray 시각화
 - [ ] 결과를 Nav2 costmap과 연결
 
@@ -58,9 +58,11 @@ gazebo_sensor_ws/
         ├── launch/
         │   └── gazebo.launch.py        # Gazebo + 로봇 스폰 런치파일
         ├── amr_perception/
-        │   ├── sensor_processor.py         # 센서 데이터 처리 노드
-        │   ├── pointcloud_filters.py       # 노이즈 필터링 알고리즘 (SOR)
-        │   └── lidar_pointcloud_filter.py  # LiDAR 필터 노드
+        │   ├── sensor_processor.py           # 센서 데이터 처리 노드
+        │   ├── pointcloud_filters.py         # 노이즈 필터링 알고리즘 (SOR)
+        │   ├── lidar_pointcloud_filter.py    # LiDAR 필터 노드
+        │   ├── pointcloud_clustering.py      # 장애물 클러스터링 알고리즘 (DBSCAN)
+        │   └── lidar_obstacle_clustering.py  # LiDAR 클러스터링 노드
         ├── rviz/
         │   └── pointcloud_filter_compare.rviz  # 필터 전/후 비교용 rviz 설정
         ├── package.xml
@@ -100,7 +102,19 @@ PCL의 SOR 알고리즘을 라이브러리 호출 없이 numpy/scipy로 직접 �
 
 **알려진 한계**: 로봇 자체 차체/바퀴에서 반사되는 근거리 self-return(0-2m 구간)은 여전히 많이
 제거된다(약 48%). 이는 SOR의 오작동이 아니라 근접 반사파가 벽면과 통계적으로 다른 분포를 갖기
-때문으로 보이며, 근본적인 해결은 SOR 이전에 별도의 최소거리 셀프필터를 두는 것이다 (다음 단계 예정).
+때문으로 보이며, 근본적인 해결은 SOR 이전에 별도의 최소거리 셀프필터를 두는 것이다.
+
+### 장애물 클러스터링 (DBSCAN)
+
+SOR로 필터링된 포인트클라우드(`/lidar/points_filtered`)를 밀도 기반 클러스터링(DBSCAN)으로
+직접 구현했다 (`pointcloud_clustering.py`). 반경 eps 안에 min_samples개 이상의 이웃(자기 자신
+포함)이 있는 점을 core point로 보고, core point끼리/core point의 이웃끼리 BFS 방식으로 연쇄
+확장해 같은 클러스터로 묶는다. SOR과 달리 이웃 탐색에 `query_ball_point`(반경 기반)를 사용하고,
+단일 패스가 아니라 큐 기반으로 클러스터를 점진적으로 확장하는 구조라는 점이 SOR과의 핵심 차이다.
+
+실제 시뮬레이션에서 장애물 10개(월드에 배치된 고정 장애물 개수와 일치)가 프레임마다 안정적으로
+검출되는 것을 centroid 좌표 기준으로 확인했다. 다만 원점 근처(0,0,-0.04)에 SOR이 못 거른
+self-return 잔여 클러스터가 하나 섞여있는데, 이는 위에서 언급한 self-return 한계와 같은 원인이다.
 
 ---
 
@@ -122,10 +136,13 @@ ros2 run amr_perception sensor_processor.py
 # 4. 포인트클라우드 노이즈 필터링 노드 실행
 ros2 run amr_perception lidar_pointcloud_filter.py
 
-# 5. 필터 전/후 비교 (rviz)
+# 5. 장애물 클러스터링 노드 실행 (필터링 노드가 먼저 떠있어야 함)
+ros2 run amr_perception lidar_obstacle_clustering.py
+
+# 6. 필터 전/후 비교 (rviz)
 rviz2 -d install/amr_perception/share/amr_perception/rviz/pointcloud_filter_compare.rviz
 
-# 6. 토픽 확인
+# 7. 토픽 확인
 ros2 topic list
 ros2 topic hz /lidar/points
 ```

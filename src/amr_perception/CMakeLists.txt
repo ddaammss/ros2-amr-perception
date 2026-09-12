@@ -11,6 +11,7 @@ ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS
   amr_perception/sensor_processor.py
   amr_perception/lidar_pointcloud_filter.py
+  amr_perception/lidar_obstacle_clustering.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
