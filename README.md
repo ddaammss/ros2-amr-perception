@@ -1,8 +1,11 @@
 # ros2-amr-perception
 
 ROS2 + Gazebo 기반 AMR(자율이동로봇) 센서 데이터 처리 파이프라인 프로젝트입니다.
-LiDAR / Depth Camera 센서 데이터를 수신하여 노이즈 필터링, 장애물 클러스터링, Obstacle Detection을 직접 구현하고,
+LiDAR 센서 데이터를 수신하여 노이즈 필터링, 장애물 클러스터링, Obstacle Detection을 직접 구현하고,
 결과를 Nav2 costmap과 연결하는 자율주행 인지 스택을 구성합니다.
+
+로봇에는 Depth 카메라도 함께 장착되어 있으나, 인지 파이프라인(필터링/클러스터링)은 LiDAR를
+중심으로 진행합니다.
 
 ---
 
